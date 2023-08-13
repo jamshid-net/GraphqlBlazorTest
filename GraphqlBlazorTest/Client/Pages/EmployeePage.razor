@@ -1,0 +1,49 @@
+﻿@page "/employees";
+@using GraphQL.Client.Abstractions;
+@using GraphQL;
+@using GraphqlBlazorTest.Shared;
+@inject ProjectClient pclient;
+
+<h3>Employee</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Full name</th>
+            <th>Birth date</th>
+            <th>Picture</th>
+            <th>Job</th>
+            <th><a role="button" href="createEmployee" class="btn btn-success">Add employee</a></th>
+        </tr>
+
+    </thead>
+    <tbody>
+        <UseEmployees Context="result">
+            <ChildContent>
+                @foreach (var employee in result.Employees)
+                {
+                 
+                    <tr>
+                        <td>@employee.FullName</td>
+                        <td>@employee.BirhDate</td>
+                        <td>@employee.Picture</td>
+                        <td>@employee.Job</td>
+                        <td><button @onclick="(()=> DeleteEmployeeAsync(employee.Id))" class="btn btn-danger">Delete</button></td>
+                    </tr>
+                }
+
+
+            </ChildContent>
+        </UseEmployees>
+    </tbody>
+</table>
+
+
+@code {
+    
+    private async Task DeleteEmployeeAsync(Guid id)
+    {
+        await pclient.DeleteEmployee.ExecuteAsync(id);
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

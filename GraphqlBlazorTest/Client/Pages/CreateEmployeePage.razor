@@ -1,0 +1,125 @@
+﻿@page "/createEmployee"
+@using GraphQL;
+@using GraphQL.Client.Abstractions;
+@using GraphqlBlazorTest.Shared;
+@inject NavigationManager NavigationManager;
+@inject ProjectClient pclient;
+
+<h3>CreateEmployeePage</h3>
+
+<EditForm Model="Employee" OnValidSubmit="CreateUserAsync">
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <p class="text-danger">@errorMessage</p>
+    }
+    <div class="form-group mb-2">
+        <label>Full name:</label>
+        <InputText @bind-Value="Employee.FullName" class="form-control" DisplayName="Fullname" />
+    </div>
+   
+    <div class="form-group mb-2">
+        <label>User name:</label>
+        <InputText @bind-Value="Employee.UserName" class="form-control" DisplayName="Username" />
+    </div>
+
+    <div class="form-group mb-2">
+        <label>Job:</label>
+        <InputText @bind-Value="Employee.Job" class="form-control" DisplayName="Job" />
+    </div>
+    <div class="form-group mb-2">
+        <label>Password:</label>
+        <InputText @bind-Value="Employee.Password" class="form-control" DisplayName="Password" />
+    </div>
+    <div class="form-group mb-2">
+        <label>Password:</label>
+        <InputDate @bind-Value="Employee.BirhDate" class="form-control" DisplayName="Birthdate" />
+    </div>
+            <label>
+                Image:
+                <InputFile multiple OnChange="OnChangeFile" class="form-control" />
+            </label>
+    <div class="card" style="width:90rem;">
+        <div class="card-body">
+          <div class="img-container m-1"><img class="rounded" src="@singleImageUrl" /></div>
+
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Create</button>
+</EditForm>
+<style>
+
+    .img-container {
+        width: 300px;
+        height: 180px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+            .img-container img:hover {
+                transform: scale(9);
+            }
+</style>
+@code {
+    EmployeeDto Employee = new();
+    private string? errorMessage = null;
+    private IBrowserFile SingleImage;
+    string singleImageUrl = string.Empty;
+
+    protected EditContext editContext;
+
+
+    private async Task OnChangeFile(InputFileChangeEventArgs image)
+    {
+
+        SingleImage = null;
+        SingleImage = image.File;
+        var format = "image/png";
+        var resizedImageFile = await SingleImage.RequestImageFileAsync(format, 300, 300);
+        var buffer = new byte[resizedImageFile.Size];
+        await resizedImageFile.OpenReadStream().ReadExactlyAsync(buffer);
+
+        singleImageUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+
+        editContext.NotifyFieldChanged(FieldIdentifier.Create(() => SingleImage));
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CreateUserAsync()
+    {
+        try
+        {
+            var employeeDtoInput = new EmployeeDtoInput
+                {
+                    BirhDate = DateTime.Now,
+                    Picture = "No photo",
+                    FullName = Employee.FullName,
+                    UserName = Employee.UserName,
+                    Password = Employee.Password,
+                    Job = Employee.Job
+                };
+           
+            await pclient.CreateEmployee.ExecuteAsync(employeeDtoInput);
+            await InvokeAsync(StateHasChanged);
+            Employee = new();
+            singleImageUrl = string.Empty;
+
+            
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+
+        }
+
+
+    }
+
+}

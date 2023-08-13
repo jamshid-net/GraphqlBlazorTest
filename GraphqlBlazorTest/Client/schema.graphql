@@ -1,0 +1,40 @@
+﻿schema {
+  query: EmployeeServiceQuery
+  mutation: EmployeeServiceMutation
+}
+
+type EmployeeServiceQuery {
+  employees: [Employee!]!
+}
+
+type EmployeeServiceMutation {
+  deleteEmployee(id: UUID!): Boolean!
+  employeeById(id: UUID!): Employee!
+  createEmployee(employee: EmployeeDtoInput!): Boolean!
+}
+
+scalar UUID
+
+type Employee {
+  id: UUID!
+  fullName: String!
+  birhDate: Date!
+  picture: String!
+  job: String!
+  password: String!
+  userName: String!
+  roles: [String!]
+}
+
+input EmployeeDtoInput {
+  fullName: String!
+  birhDate: Date!
+  picture: String!
+  job: String!
+  password: String!
+  userName: String!
+  roles: [String!]
+}
+
+"The `Date` scalar represents an ISO-8601 compliant date type."
+scalar Date

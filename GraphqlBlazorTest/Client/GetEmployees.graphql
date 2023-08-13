@@ -1,0 +1,12 @@
+query Employees {
+    employees {
+        id
+        fullName
+        birhDate
+        picture
+        job
+        password
+        userName
+        roles
+    }
+}

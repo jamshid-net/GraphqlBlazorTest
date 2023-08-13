@@ -1,0 +1,3 @@
+mutation CreateEmployee($employee: EmployeeDtoInput!) {
+  createEmployee(employee: $employee)
+}
