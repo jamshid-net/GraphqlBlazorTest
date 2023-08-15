@@ -22,8 +22,9 @@ public class Program
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnect"));
         });
-        builder.Services.AddGraphQLServer()
+        builder.Services.AddGraphQLServer().RegisterService<ApplicationDbContext>()
             .AddQueryType<EmployeeServiceQuery>()
+            .AddSorting()
             .AddMutationType<EmployeeServiceMutation>();
 
         var app = builder.Build();

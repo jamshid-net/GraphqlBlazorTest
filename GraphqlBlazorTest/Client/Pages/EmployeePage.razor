@@ -5,23 +5,33 @@
 @inject ProjectClient pclient;
 
 <h3>Employee</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Full name</th>
-            <th>Birth date</th>
-            <th>Picture</th>
-            <th>Job</th>
-            <th><a role="button" href="createEmployee" class="btn btn-success">Add employee</a></th>
-        </tr>
 
-    </thead>
-    <tbody>
-        <UseEmployees Context="result">
-            <ChildContent>
-                @foreach (var employee in result.Employees)
+@if (paginatedEmployees == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    
+
+
+
+        <table class="table">
+            <thead>
+                <tr class="EmployeeFullname">
+                    <th>Full name</th>
+                    <th>Birth date</th>
+                    <th>Picture</th>
+                    <th>Job</th>
+                    <th><a role="button" href="createEmployee" class="btn btn-success">Add employee</a></th>
+                </tr>
+
+            </thead>
+            <tbody>
+
+            @foreach (var employee in paginatedEmployees.Items)
                 {
-                 
+
                     <tr>
                         <td>@employee.FullName</td>
                         <td>@employee.BirhDate</td>
@@ -32,18 +42,82 @@
                 }
 
 
-            </ChildContent>
-        </UseEmployees>
-    </tbody>
-</table>
 
+
+            </tbody>
+        </table>
+
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item @(paginatedEmployees.PageInfo.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" @onclick="(()=> TakePaginatedEmployess((-1)*10,10))">Previous</a>
+            </li>
+            @for (int i = 0; i < (paginatedEmployees.TotalCount / 10 + 1); i++)
+            {
+                int pageNumber = i; // Create a local copy of i
+                <li class="page-item"><a class="page-link" @onclick="(()=> TakePaginatedEmployess(pageNumber* 10, 10))">@(i+1)</a></li>
+            }
+            <li class="page-item @(paginatedEmployees.PageInfo.HasNextPage ? "" : "disabled")">
+                <a class="page-link" @onclick="(()=> TakePaginatedEmployess(10,10))">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
+
+<style>
+    .EmployeeFullname th {
+        cursor: pointer;
+        user-select: none;
+    }
+
+</style>
 
 @code {
-    
+    IPaginatedEmployees_PaginatedEmployees? paginatedEmployees;
+    bool sortToggle = true;
+
+  
+
+
     private async Task DeleteEmployeeAsync(Guid id)
     {
         await pclient.DeleteEmployee.ExecuteAsync(id);
-        await InvokeAsync(StateHasChanged);
+
+
+
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await TakePaginatedEmployess(0,10);
+
+    }
+
+    private async Task TakePaginatedEmployess(int? skip, int? take)
+    {
+        var result =(await pclient.PaginatedEmployees.ExecuteAsync(skip, take))?.Data?.PaginatedEmployees;
+        paginatedEmployees = result;
+    }
+
+
+    //private void SortEmployee<T>(Func<IEmployees_Employees, T> propertySelector)
+    //{
+    //    if (sortToggle)
+    //    {
+    //        employees_ = employees_.OrderBy(propertySelector).ToList();
+    //        sortToggle = false;
+    //    }
+    //    else
+    //    {
+    //        employees_ = employees_.OrderByDescending(propertySelector).ToList();
+    //        sortToggle = true;
+    //    }
+
+        //}
+
+
+
 
 }

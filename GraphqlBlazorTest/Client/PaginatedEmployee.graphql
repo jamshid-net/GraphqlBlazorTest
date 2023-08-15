@@ -1,0 +1,19 @@
+﻿query PaginatedEmployees($skip: Int, $take: Int) {
+  paginatedEmployees(skip: $skip, take: $take) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      id
+      fullName
+      birhDate
+      picture
+      job
+      password
+      userName
+      roles
+    }
+    totalCount
+  }
+}
