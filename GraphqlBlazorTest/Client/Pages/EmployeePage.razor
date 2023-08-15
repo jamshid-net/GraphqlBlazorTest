@@ -12,40 +12,40 @@
 }
 else
 {
-    
 
 
 
-        <table class="table">
-            <thead>
-                <tr class="EmployeeFullname">
-                    <th>Full name</th>
-                    <th>Birth date</th>
-                    <th>Picture</th>
-                    <th>Job</th>
-                    <th><a role="button" href="createEmployee" class="btn btn-success">Add employee</a></th>
+
+    <table class="table">
+        <thead>
+            <tr class="EmployeeFullname">
+                <th @onclick="(()=>SortEmployee(x=> x.FullName))">Full name</th>
+                <th @onclick="(()=>SortEmployee(x=> x.BirhDate))">Birth date</th>
+                <th>Picture</th>
+                <th @onclick="(()=>SortEmployee(x=> x.Job))">Job</th>
+                <th><a role="button" href="createEmployee" class="btn btn-success">Add employee</a></th>
+            </tr>
+
+        </thead>
+        <tbody>
+
+            @foreach (var employee in paginatedEmployeesitems)
+            {
+
+                <tr>
+                    <td>@employee.FullName</td>
+                    <td>@employee.BirhDate</td>
+                    <td>@employee.Picture</td>
+                    <td>@employee.Job</td>
+                    <td><button @onclick="(()=> DeleteEmployeeAsync(employee.Id))" class="btn btn-danger">Delete</button></td>
                 </tr>
-
-            </thead>
-            <tbody>
-
-            @foreach (var employee in paginatedEmployees.Items)
-                {
-
-                    <tr>
-                        <td>@employee.FullName</td>
-                        <td>@employee.BirhDate</td>
-                        <td>@employee.Picture</td>
-                        <td>@employee.Job</td>
-                        <td><button @onclick="(()=> DeleteEmployeeAsync(employee.Id))" class="btn btn-danger">Delete</button></td>
-                    </tr>
-                }
+            }
 
 
 
 
-            </tbody>
-        </table>
+        </tbody>
+    </table>
 
 
     <nav aria-label="Page navigation example">
@@ -56,7 +56,7 @@ else
             @for (int i = 0; i < (paginatedEmployees.TotalCount / 10 + 1); i++)
             {
                 int pageNumber = i; // Create a local copy of i
-                <li class="page-item"><a class="page-link" @onclick="(()=> TakePaginatedEmployess(pageNumber* 10, 10))">@(i+1)</a></li>
+                <li class="page-item"><a class="page-link" @onclick="(()=> TakePaginatedEmployess(pageNumber* 10, 10))">@(i + 1)</a></li>
             }
             <li class="page-item @(paginatedEmployees.PageInfo.HasNextPage ? "" : "disabled")">
                 <a class="page-link" @onclick="(()=> TakePaginatedEmployess(10,10))">Next</a>
@@ -75,9 +75,12 @@ else
 
 @code {
     IPaginatedEmployees_PaginatedEmployees? paginatedEmployees;
+
+    IReadOnlyList<IPaginatedEmployees_PaginatedEmployees_Items>? paginatedEmployeesitems;
+
     bool sortToggle = true;
 
-  
+
 
 
     private async Task DeleteEmployeeAsync(Guid id)
@@ -91,31 +94,34 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        await TakePaginatedEmployess(0,10);
+        await TakePaginatedEmployess(0, 10);
 
     }
 
     private async Task TakePaginatedEmployess(int? skip, int? take)
     {
-        var result =(await pclient.PaginatedEmployees.ExecuteAsync(skip, take))?.Data?.PaginatedEmployees;
+        var result = (await pclient.PaginatedEmployees.ExecuteAsync(skip, take))?.Data?.PaginatedEmployees;
         paginatedEmployees = result;
+        paginatedEmployeesitems = paginatedEmployees?.Items;
+
+
     }
 
 
-    //private void SortEmployee<T>(Func<IEmployees_Employees, T> propertySelector)
-    //{
-    //    if (sortToggle)
-    //    {
-    //        employees_ = employees_.OrderBy(propertySelector).ToList();
-    //        sortToggle = false;
-    //    }
-    //    else
-    //    {
-    //        employees_ = employees_.OrderByDescending(propertySelector).ToList();
-    //        sortToggle = true;
-    //    }
+    private void SortEmployee<T>(Func<IPaginatedEmployees_PaginatedEmployees_Items, T> propertySelector)
+    {
+        if (sortToggle)
+        {
+            paginatedEmployeesitems = paginatedEmployeesitems?.OrderBy(propertySelector).ToList();
+            sortToggle = false;
+        }
+        else
+        {
+            paginatedEmployeesitems = paginatedEmployeesitems?.OrderByDescending(propertySelector).ToList();
+            sortToggle = true;
+        }
 
-        //}
+    }
 
 
 
