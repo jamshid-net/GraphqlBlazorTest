@@ -10,6 +10,7 @@
     <GraphQL Remove="DeleteEmployee.graphql" />
     <GraphQL Remove="GetEmployees.graphql" />
     <GraphQL Remove="PaginatedEmployee.graphql" />
+    <GraphQL Remove="PaginatedFilterEmployee.graphql" />
   </ItemGroup>
 
   <ItemGroup>

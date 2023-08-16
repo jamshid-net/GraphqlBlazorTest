@@ -5,14 +5,28 @@
 
 type EmployeeServiceQuery {
   employees: [Employee!]!
-  generateUsers: Boolean!
   paginatedEmployees(skip: Int take: Int): PaginatedEmployeesCollectionSegment
+  paginatedWithFilterEmployees(skip: Int take: Int where: EmployeeFilterInput): PaginatedWithFilterEmployeesCollectionSegment
+  generateUsers: Boolean!
 }
 
 type EmployeeServiceMutation {
   deleteEmployee(id: UUID!): Boolean!
   employeeById(id: UUID!): Employee!
   createEmployee(employee: EmployeeDtoInput!): Boolean!
+}
+
+input EmployeeFilterInput {
+  and: [EmployeeFilterInput!]
+  or: [EmployeeFilterInput!]
+  id: UuidOperationFilterInput
+  fullName: StringOperationFilterInput
+  birhDate: DateOperationFilterInput
+  picture: StringOperationFilterInput
+  job: StringOperationFilterInput
+  password: StringOperationFilterInput
+  userName: StringOperationFilterInput
+  roles: ListStringOperationFilterInput
 }
 
 "A segment of a collection."
@@ -22,6 +36,67 @@ type PaginatedEmployeesCollectionSegment {
   "A flattened list of the items."
   items: [Employee!]
   totalCount: Int!
+}
+
+"A segment of a collection."
+type PaginatedWithFilterEmployeesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Employee!]
+  totalCount: Int!
+}
+
+input UuidOperationFilterInput {
+  eq: UUID
+  neq: UUID
+  in: [UUID]
+  nin: [UUID]
+  gt: UUID
+  ngt: UUID
+  gte: UUID
+  ngte: UUID
+  lt: UUID
+  nlt: UUID
+  lte: UUID
+  nlte: UUID
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input DateOperationFilterInput {
+  eq: Date
+  neq: Date
+  in: [Date]
+  nin: [Date]
+  gt: Date
+  ngt: Date
+  gte: Date
+  ngte: Date
+  lt: Date
+  nlt: Date
+  lte: Date
+  nlte: Date
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput
+  none: StringOperationFilterInput
+  some: StringOperationFilterInput
+  any: Boolean
 }
 
 "Information about the offset pagination."
@@ -45,6 +120,9 @@ type Employee {
 
 scalar UUID
 
+"The `Date` scalar represents an ISO-8601 compliant date type."
+scalar Date
+
 input EmployeeDtoInput {
   fullName: String!
   birhDate: Date!
@@ -54,6 +132,3 @@ input EmployeeDtoInput {
   userName: String!
   roles: [String!]
 }
-
-"The `Date` scalar represents an ISO-8601 compliant date type."
-scalar Date

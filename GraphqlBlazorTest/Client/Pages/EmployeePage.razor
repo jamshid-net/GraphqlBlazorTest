@@ -15,7 +15,10 @@ else
 
 
 
-
+    <section style="margin-bottom: 10px">
+        <input type="text" class="form-control" placeholder="Search by Employee by name"
+        @bind-value="@SearchTerm" @bind-value:event="oninput" @onkeyup="(async ()=>await SearchingEmployeeByName())" />
+    </section>
     <table class="table">
         <thead>
             <tr class="EmployeeFullname">
@@ -50,17 +53,13 @@ else
 
     <nav aria-label="Page navigation example">
         <ul class="pagination">
-            <li class="page-item @(paginatedEmployees.PageInfo.HasPreviousPage ? "" : "disabled")">
-                <a class="page-link" @onclick="(()=> TakePaginatedEmployess((-1)*10,10))">Previous</a>
-            </li>
+           
             @for (int i = 0; i < (paginatedEmployees.TotalCount / 10 + 1); i++)
             {
                 int pageNumber = i; // Create a local copy of i
-                <li class="page-item"><a class="page-link" @onclick="(()=> TakePaginatedEmployess(pageNumber* 10, 10))">@(i + 1)</a></li>
+                <li class="page-item"><a class="pageCursore page-link" @onclick="(()=> TakePaginatedEmployess(pageNumber* 10, 10))">@(i + 1)</a></li>
             }
-            <li class="page-item @(paginatedEmployees.PageInfo.HasNextPage ? "" : "disabled")">
-                <a class="page-link" @onclick="(()=> TakePaginatedEmployess(10,10))">Next</a>
-            </li>
+           
         </ul>
     </nav>
 }
@@ -70,15 +69,37 @@ else
         cursor: pointer;
         user-select: none;
     }
-
+    .pageCursore{
+        cursor: pointer;
+        user-select: none;
+    }
 </style>
 
 @code {
+
+    public string SearchTerm { get; set; }
+    [Parameter]
+    public EventCallback<string> OnSearchChanged { get; set; }
+
     IPaginatedEmployees_PaginatedEmployees? paginatedEmployees;
 
     IReadOnlyList<IPaginatedEmployees_PaginatedEmployees_Items>? paginatedEmployeesitems;
 
     bool sortToggle = true;
+
+    private async Task SearchingEmployeeByName()
+    {
+        if (!string.IsNullOrEmpty(SearchTerm))
+        {
+            paginatedEmployeesitems = paginatedEmployeesitems?.Where(x=> x.FullName.ToLower().Contains(SearchTerm.ToLower())).ToList();
+
+        }
+        else
+        {
+            paginatedEmployeesitems = paginatedEmployeesitems?.ToList();
+        }
+        await Task.CompletedTask;
+    }
 
 
 

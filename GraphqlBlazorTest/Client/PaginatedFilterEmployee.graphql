@@ -1,0 +1,23 @@
+﻿query PaginatedWithFilterEmployees($fullNameContains: String, $skip: Int, $take: Int) {
+  paginatedWithFilterEmployees(
+    where: { fullName: { contains: $fullNameContains } }
+    skip: $skip
+    take: $take
+  ) {
+    items {
+      id
+      fullName
+      birhDate
+      picture
+      job
+      password
+      userName
+      roles
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}

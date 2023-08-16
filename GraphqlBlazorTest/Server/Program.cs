@@ -24,7 +24,7 @@ public class Program
         });
         builder.Services.AddGraphQLServer().RegisterService<ApplicationDbContext>()
             .AddQueryType<EmployeeServiceQuery>()
-            .AddSorting()
+            .AddFiltering()
             .AddMutationType<EmployeeServiceMutation>();
 
         var app = builder.Build();

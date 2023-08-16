@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bogus;
 using GraphqlBlazorTest.Server.Data;
+using GraphqlBlazorTest.Server.FilterGraphql;
 using GraphqlBlazorTest.Server.SortingGraphql;
 using GraphqlBlazorTest.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,16 @@ public class EmployeeServiceQuery
         var result = await context.Employees.AsNoTracking().ToListAsync();
         return result;
     }
+    [UseOffsetPaging(IncludeTotalCount = true)]
+    [UseFiltering]
+    public async ValueTask<List<Employee>> PaginatedWithFilterEmployees([Service] ApplicationDbContext context)
+    {
+        var result = await context.Employees.AsNoTracking().ToListAsync();
+        return result;
+    }
+
+
+
     public async ValueTask<bool> GenerateUsers([Service] ApplicationDbContext context)
     {
         Faker faker = new();
