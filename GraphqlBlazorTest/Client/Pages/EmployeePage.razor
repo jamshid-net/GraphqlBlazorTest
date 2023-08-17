@@ -1,10 +1,16 @@
 ﻿@page "/employees";
+@using BlazorDownloadFile;
 @using GraphQL.Client.Abstractions;
 @using GraphQL;
 @using GraphqlBlazorTest.Shared;
 @inject ProjectClient pclient;
-
+@inject HttpClient client;
+@inject IJSRuntime JS;
+@inject IBlazorDownloadFileService BlazorDownloadFileService;
 <h3>Employee</h3>
+
+
+
 
 @if (paginatedEmployees == null)
 {
@@ -63,7 +69,10 @@ else
         </ul>
     </nav>
 }
-
+@*<button @onclick="(async ()=>await DownloadFile2())" class="btn btn-success">
+    Download file
+</button>*@
+<a role="button" href="api/FileTest/DownloadExelOfEmployees" class="btn btn-warning">Download (Rest api)</a>
 <style>
     .EmployeeFullname th {
         cursor: pointer;
@@ -103,12 +112,29 @@ else
 
 
 
+    private async Task DownloadFile()
+    {
+        var bytes = await pclient.FileBytes.ExecuteAsync();
+        await BlazorDownloadFileService.DownloadFile("myfile.pptx", bytes.Data.FileBytes, "application/octet-stream");
+    }
+    private async Task DownloadFile2()
+    {
+        using var response = await client.GetAsync("api/FileTest/DownloadFile");
+
+
+        if (response.IsSuccessStatusCode)
+        {
+            byte[] bytes = await response.Content.ReadAsByteArrayAsync();
+
+            await BlazorDownloadFileService.DownloadFile("filename.pptx",
+                bytes,
+                contentType: "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+        }
+    }
 
     private async Task DeleteEmployeeAsync(Guid id)
     {
         await pclient.DeleteEmployee.ExecuteAsync(id);
-
-
 
     }
 

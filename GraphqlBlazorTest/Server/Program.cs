@@ -1,4 +1,6 @@
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using GraphqlBlazorTest.Server.Data;
+using GraphqlBlazorTest.Server.ExelFileGenerator;
 using GraphqlBlazorTest.Server.GraphqlServices;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +19,7 @@ public class Program
         builder.Services.AddRazorPages();
 
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
+        builder.Services.AddScoped(typeof(ExelFileGenerator<>));
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnect"));

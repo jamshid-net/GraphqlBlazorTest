@@ -30,7 +30,12 @@ public class EmployeeServiceQuery
         return result;
     }
 
-
+    public async Task<byte[]> GetFileBytesAsync()
+    {
+        byte[] filebyte = await File.ReadAllBytesAsync(@"D:\JSPresentation.pptx");
+        return filebyte;
+    }
+        
 
     public async ValueTask<bool> GenerateUsers([Service] ApplicationDbContext context)
     {

@@ -7,6 +7,7 @@ type EmployeeServiceQuery {
   employees: [Employee!]!
   paginatedEmployees(skip: Int take: Int): PaginatedEmployeesCollectionSegment
   paginatedWithFilterEmployees(skip: Int take: Int where: EmployeeFilterInput): PaginatedWithFilterEmployeesCollectionSegment
+  fileBytes: [Byte!]!
   generateUsers: Boolean!
 }
 
@@ -122,6 +123,9 @@ scalar UUID
 
 "The `Date` scalar represents an ISO-8601 compliant date type."
 scalar Date
+
+"The `Byte` scalar type represents non-fractional whole numeric values. Byte can represent values between 0 and 255."
+scalar Byte
 
 input EmployeeDtoInput {
   fullName: String!

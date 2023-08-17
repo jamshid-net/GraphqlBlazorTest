@@ -8,12 +8,14 @@
   <ItemGroup>
     <GraphQL Remove="CreateEmployee.graphql" />
     <GraphQL Remove="DeleteEmployee.graphql" />
+    <GraphQL Remove="FileBytes.graphql" />
     <GraphQL Remove="GetEmployees.graphql" />
     <GraphQL Remove="PaginatedEmployee.graphql" />
     <GraphQL Remove="PaginatedFilterEmployee.graphql" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
     <PackageReference Include="bootstrap" Version="5.3.1" />
     <PackageReference Include="GraphQL.Client" Version="6.0.0" />
     <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft" Version="6.0.0" />

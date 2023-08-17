@@ -1,0 +1,3 @@
+﻿query FileBytes {
+    fileBytes
+}
